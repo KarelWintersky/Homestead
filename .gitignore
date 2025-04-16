@@ -1,0 +1,7 @@
+.idea
+.box_dump
+vendor
+config
+
+composer.lock
+homestead.phar

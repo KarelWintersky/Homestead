@@ -1,0 +1,27 @@
+{
+    "name": "karelwintersky/homestead",
+    "description": "Homestead - simple links and widgets dashboard",
+    "type": "project",
+    "authors": [
+        {
+            "name": "wombat",
+            "email": "karel@wintersky.ru"
+        }
+    ],
+    "config": {
+        "optimize-autoloader": true,
+        "vendor-dir": "vendor",
+        "platform-check": false
+    },
+    "autoload": {
+        "files": [
+            "engine/bootstrap.php"
+        ],
+        "psr-4": {
+            "Homestead\\": "engine/"
+        }
+    },
+    "require": {
+        "symfony/yaml": "^7.2"
+    }
+}
