@@ -25,7 +25,15 @@
                 "doc",
                 "test",
                 "tests",
-                "vendor-bin"
+                "vendor-bin",
+                ".gitignore",
+                ".coveralls.yml",
+                ".php_cs.dist",
+                ".travis.yml",
+                "composer.lock",
+                "config.example.php",
+                "phpstan.neon",
+                "phpunit.xml"
             ],
             "in": "vendor"
         },

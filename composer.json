@@ -22,6 +22,7 @@
         }
     },
     "require": {
-        "symfony/yaml": "^7.2"
+        "symfony/yaml": "^7.2",
+        "karelwintersky/arris.toolkit.nanoredis": "^0"
     }
 }
