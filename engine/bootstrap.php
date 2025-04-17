@@ -12,4 +12,4 @@ if (isset($credentials['redis'])) {
     $redis->connect($cr['host'], $cr['port'], $cr['database'], $cr['enable']);
 }
 
-Homestead::$service_redis = $redis;
+Homestead::$redis = $redis;

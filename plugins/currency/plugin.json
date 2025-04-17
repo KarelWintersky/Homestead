@@ -1,0 +1,23 @@
+{
+    "name": "Currency Rates",
+    "version": "1.0",
+    "author": "Karel Wintersky",
+    "description": "Displays current currency exchange rates from CBR",
+    "options": {
+        "currencies": {
+            "type": "array",
+            "default": ["R01235", "R01239"],
+            "description": "Currency codes from CBR"
+        },
+        "cache_ttl": {
+            "type": "integer",
+            "default": 3600,
+            "description": "Cache lifetime in seconds"
+        }
+    },
+    "available_currencies": {
+        "R01235": "USD (Доллар США)",
+        "R01239": "EUR (Евро)",
+        "R01375": "CNY (Китайский юань)"
+    }
+}

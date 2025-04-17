@@ -15,7 +15,7 @@ class Homestead
     public static $_sections_raw;
     public static $_sections;
 
-    public static RedisClient|null $service_redis = null;
+    public static RedisClient|null $redis = null;
 
     public static function init()
     {
@@ -93,6 +93,43 @@ class Homestead
         self::$_sections = $sections;
 
         return $sections;
+    }
+
+    /**
+     *
+     * @param $section
+     * @param $redis
+     * @return array
+     */
+    public static function load_plugins($section, $redis = null): array
+    {
+        $pluginsOutput = [];
+
+        foreach ($section['plugins'] ?? [] as $pluginName => $pluginOptions) {
+
+            if (!$pluginOptions['enable']) continue;
+
+            $pluginPath = INSTALL_PATH . '/plugins/' . $pluginName . '/plugin.php';
+
+            if (file_exists($pluginPath)) {
+                $pluginFunction = include $pluginPath;
+                if (is_callable($pluginFunction)) {
+                    $pluginsOutput[$pluginName] = $pluginFunction($pluginOptions);
+
+                    // Добавляем отметку о кешировании
+                    if ($redis && isset($pluginsOutput[$pluginName]['_cached'])) {
+                        $pluginsOutput[$pluginName]['_cached'] = 'Yes (until '.date(
+                                'H:i:s',
+                                $pluginsOutput[$pluginName]['_cached'] + 1800
+                            ).')';
+                    } else {
+                        $pluginsOutput[$pluginName]['_cached'] = 'No';
+                    }
+                }
+            }
+        }
+
+        return $pluginsOutput;
     }
 
 }

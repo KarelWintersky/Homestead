@@ -1,0 +1,24 @@
+{
+    "name": "Weather Widget",
+    "version": "1.0",
+    "author": "Karel Wintersky",
+    "description": "Displays current weather information",
+    "options": {
+        "cache_ttl": 1800,
+        "api_key": {
+            "type": "string",
+            "required": true,
+            "description": ""
+        },
+        "city": {
+            "type": "string",
+            "default": "Sankt-Peterburg",
+            "description": "Sankt-Peterburg"
+        },
+        "units": {
+            "type": "string",
+            "default": "metric",
+            "options": ["metric", "imperial"]
+        }
+    }
+}

@@ -4,8 +4,8 @@ use Homestead\Homestead;
 use Symfony\Component\Yaml\Exception\ParseException;
 
 define("START_TIME", microtime(true));
-// const IS_PRODUCTION = 1;
 const CONFIG_PATH = __DIR__ . DIRECTORY_SEPARATOR . 'config';
+const INSTALL_PATH = __DIR__;
 
 define("IS_PRODUCTION", !is_file(__DIR__ . DIRECTORY_SEPARATOR . 'composer.lock'));
 
@@ -26,6 +26,7 @@ try {
 
     // Загружаем все конфиги секций
     $sections = Homestead::loadSections($allSectionsConfig);
+    $plugins = Homestead::load_plugins( Homestead::loadYaml( CONFIG_PATH . DIRECTORY_SEPARATOR . '/widgets.yml') );
 
 } catch (RuntimeException|ParseException $e) {
     die($e->getMessage());
@@ -160,6 +161,13 @@ try {
         </div>
     <?php endforeach; ?>
 
+    <?php if (!empty($plugins )): ?>
+    <?php foreach ($plugins as $plugin): ?>
+        <?= $plugin['html'] ?>
+        <style><?= $plugin['css'] ?></style>
+        <script><?= $plugin['js'] ?></script>
+    <?php endforeach; ?>
+    <?php endif; ?>
 </body>
 </html>
 
