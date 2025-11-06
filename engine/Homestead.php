@@ -98,6 +98,10 @@ class Homestead
         $sections = [];
 
         foreach ($allSectionsConfig['sections'] as $sectionFile) {
+            if (!is_file(CONFIG_PATH . DIRECTORY_SEPARATOR . $sectionFile)) {
+                continue;
+            }
+
             $sectionConfig = self::loadYaml(CONFIG_PATH . DIRECTORY_SEPARATOR . $sectionFile);
 
             if ($sectionConfig && isset($sectionConfig['resources'])) {
