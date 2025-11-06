@@ -14,14 +14,14 @@
         "platform-check": false
     },
     "autoload": {
-        "files": [
-            "engine/bootstrap.php"
-        ],
         "psr-4": {
             "Homestead\\": "engine/"
         }
     },
     "require": {
+        "php": "^8",
+        "ext-redis": "*",
+        "ext-simplexml": "*",
         "symfony/yaml": "^7.2",
         "karelwintersky/arris.toolkit.nanoredis": "^0"
     }

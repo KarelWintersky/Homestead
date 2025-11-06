@@ -1,5 +1,6 @@
 <?php
 
+use Arris\Toolkit\RedisClientException;
 use Homestead\Homestead;
 use Symfony\Component\Yaml\Exception\ParseException;
 
@@ -11,12 +12,15 @@ define("IS_PRODUCTION", !is_file(__DIR__ . DIRECTORY_SEPARATOR . 'composer.lock'
 
 if (IS_PRODUCTION === false) {
     require_once __DIR__ . '/vendor/autoload.php';
-    require_once __DIR__ . '/engine/bootstrap.php';
 } else {
     require_once __DIR__ . '/homestead.phar';
 }
 
 try {
+    Homestead::init();
+    Homestead::loadCredentials();
+    Homestead::initRedis();
+
     $layoutConfig = Homestead::loadLayoutConfig();
     $allSectionsConfig = Homestead::loadAllSectionsConfig();
 
@@ -26,9 +30,10 @@ try {
 
     // Загружаем все конфиги секций
     $sections = Homestead::loadSections($allSectionsConfig);
-    $plugins = Homestead::load_plugins( Homestead::loadYaml( CONFIG_PATH . DIRECTORY_SEPARATOR . '/widgets.yml') );
 
-} catch (RuntimeException|ParseException $e) {
+    // $plugins = Plugins::load_plugins( Homestead::loadYaml( CONFIG_PATH . DIRECTORY_SEPARATOR . '/_widgets.yml') );
+
+} catch (RuntimeException|ParseException|RedisClientException|RedisException $e) {
     die($e->getMessage());
 }
 

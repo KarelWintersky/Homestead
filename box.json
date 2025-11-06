@@ -7,7 +7,6 @@
     "stub": false,
     "compression": "GZ",
 
-    "exclude-dev-files": true,
     "check-requirements": false,
 
     "blacklist": [
