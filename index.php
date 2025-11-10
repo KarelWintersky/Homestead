@@ -4,11 +4,10 @@ use Arris\Toolkit\RedisClientException;
 use Homestead\Homestead;
 use Symfony\Component\Yaml\Exception\ParseException;
 
-define("START_TIME", microtime(true));
-const CONFIG_PATH = __DIR__ . DIRECTORY_SEPARATOR . 'config';
-const INSTALL_PATH = __DIR__;
-
-define("IS_PRODUCTION", !is_file(__DIR__ . DIRECTORY_SEPARATOR . 'composer.lock'));
+if (!defined("START_TIME")) { define("START_TIME", microtime(true)); }
+if (!defined("CONFIG_PATH")) { define("CONFIG_PATH", __DIR__ . DIRECTORY_SEPARATOR . 'config'); };
+if (!defined("INSTALL_PATH")) { define("INSTALL_PATH", __DIR__); }
+if (!defined("IS_PRODUCTION")) { define("IS_PRODUCTION", !is_file(__DIR__ . DIRECTORY_SEPARATOR . 'composer.lock')); }
 
 if (IS_PRODUCTION === false) {
     require_once __DIR__ . '/vendor/autoload.php';
@@ -175,4 +174,7 @@ try {
     <?php endif; ?>
 </body>
 </html>
+
+<?php
+die;
 
