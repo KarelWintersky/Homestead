@@ -1,9 +1,15 @@
 <?php
 
-namespace Homestead;
+namespace _todo;
 
 class Plugins
 {
+    private static mixed $root;
+
+    public static function init($root): void
+    {
+        self::$root = $root;
+    }
     /**
      *
      * @param $section
@@ -18,7 +24,7 @@ class Plugins
 
             if (!$pluginOptions['enable']) continue;
 
-            $pluginPath = INSTALL_PATH . '/plugins/' . $pluginName . '/plugin.php';
+            $pluginPath = self::$root . '/plugins/' . $pluginName . '/plugin.php';
 
             if (file_exists($pluginPath)) {
                 $pluginFunction = include $pluginPath;

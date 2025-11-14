@@ -22,7 +22,6 @@
         "php": "^8",
         "ext-redis": "*",
         "ext-simplexml": "*",
-        "symfony/yaml": "^7.2",
-        "karelwintersky/arris.toolkit.nanoredis": "^0"
+        "symfony/yaml": "^7.2"
     }
 }

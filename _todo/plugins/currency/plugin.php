@@ -60,7 +60,7 @@ function currency_plugin($options) {
     $html .= '</ul><div class="cache-info">Updated: ' . date('H:i') . '</div></div>';
 
     $result = [
-        'css' => file_exists(__DIR__.'/currency.css') ? file_get_contents(__DIR__.'/currency.css') : '',
+        'css' => file_exists(__DIR__ . '/currency.css') ? file_get_contents(__DIR__ . '/currency.css') : '',
         'html' => $html,
         'data' => $currencies,
         '_cached' => time()

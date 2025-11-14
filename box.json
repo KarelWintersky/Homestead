@@ -1,24 +1,46 @@
 {
-    "main": "vendor/autoload.php",
-    "output": "homestead.phar",
-    "force-autodiscovery": true,
-    "directories": ["vendor", "engine"],
-
-    "stub": false,
+    "main": "index.php",
+    "output": "index.phar",
     "compression": "GZ",
 
-    "check-requirements": false,
-
-    "blacklist": [
-        "README.md",
-        "CHANGELOG.md",
-        "LICENSE",
-        "config",
-        "icons",
-        ".box"
+    "compactors": [
+        "KevinGH\\Box\\Compactor\\Php",
+        "KevinGH\\Box\\Compactor\\Json"
     ],
+
+    "directories": [
+        "engine",
+        "vendor",
+        "templates",
+        "assets"
+    ],
+
+    "files": [
+        "index.php",
+        "composer.json"
+    ],
+    "files-bin": [
+        "templates/main.php",
+        "assets/styles.css",
+        "assets/scripts.js"
+    ],
+
     "finder": [
         {
+            "name": "*.php",
+            "in": "engine"
+        },
+        {
+            "name": "*.html",
+            "in": "templates"
+        },
+        {
+            "name": ["*.css", "*.js", "*.jpg", "*.png", "*.svg", "*.ico"],
+            "in": "assets"
+        },
+        {
+            "name": "*.php",
+            "in": "vendor",
             "notName": "/LICENSE|.*\\.md|.*\\.dist|Makefile|composer\\.json|composer\\.lock/",
             "exclude": [
                 "doc",
@@ -33,12 +55,19 @@
                 "config.example.php",
                 "phpstan.neon",
                 "phpunit.xml"
-            ],
-            "in": "vendor"
-        },
-        {
-            "name": "composer.json",
-            "in": "."
+            ]
         }
-    ]
+    ],
+
+    "blacklist": [
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "config",
+        "icons",
+        ".box"
+    ],
+
+    "shebang": false,
+    "check-requirements": false
 }

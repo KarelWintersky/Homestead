@@ -2,47 +2,53 @@
 
 namespace Homestead;
 
-use Arris\Toolkit\RedisClient;
-use Arris\Toolkit\RedisClientException;
-use RedisException;
-use Symfony\Component\Yaml\Yaml;
-
 class Homestead
 {
-    public static array $config_files = [];
+    /**
+     * @var string
+     */
+    private static string $_config_root;
 
-    public static mixed $_config;
-    public static mixed $_layout;
-    public static mixed $_sections_raw;
+    private static array $config_files = [];
+
+    /**
+     * @var mixed
+     */
+    public static mixed $_layout = [];
+
+    /**
+     * @var mixed
+     */
+    public static mixed $_sections_raw = [];
+
+    /**
+     * @var array|mixed
+     */
     public static mixed $_sections;
 
-    public static RedisClient|null $redis = null;
+    /**
+     * @var mixed
+     */
+    public static mixed $_config;
 
-    public static function init(): void
+    public static function init($root = __DIR__): void
     {
-        self::$config_files['config'] = CONFIG_PATH . '/_config.yml';
-        self::$config_files['layout'] = CONFIG_PATH . '/_layout.yml';
-        self::$config_files['sections'] = CONFIG_PATH . '/_sections.yml';
+        if (!is_dir($root)) {
+            throw new \RuntimeException("Missing config directory: {$root}");
+        }
+
+        self::$_config_root = $root;
+
+        self::$config_files['config'] = self::$_config_root . '/_config.yml';
+        self::$config_files['layout'] = self::$_config_root . '/_layout.yml';
+        self::$config_files['sections'] = self::$_config_root . '/_sections.yml';
     }
 
     /**
-     * @throws RedisClientException
-     * @throws RedisException
+     * Загружает файл с конфигами редис/sqlite
+     *
+     * @return mixed
      */
-    public static function initRedis(): void
-    {
-        $redis = new \Arris\Toolkit\RedisClient();
-
-        $credentials = self::$_config;
-
-        if (isset($credentials['redis'])) {
-            $cr = $credentials['redis'];
-            $redis->connect($cr['host'], $cr['port'], $cr['database'], $cr['enable']);
-        }
-
-        Homestead::$redis = $redis;
-    }
-
     public static function loadCredentials():mixed
     {
         $source = self::$config_files['config'];
@@ -50,19 +56,11 @@ class Homestead
             throw new \RuntimeException("Missing config/_config.yml file");
         }
 
-        self::$_config = $systemConfig = self::loadYaml($source);
+        self::$_config = $systemConfig = Helper::loadYaml($source);
 
         return $systemConfig;
     }
 
-    public static function loadYaml($filename): mixed
-    {
-        return Yaml::parseFile($filename);
-    }
-
-    /**
-     * @return mixed|null
-     */
     public static function loadLayoutConfig(): mixed
     {
         $source = self::$config_files['layout'];
@@ -70,19 +68,33 @@ class Homestead
             throw new \RuntimeException("Missing config/_layout.yml file");
         }
 
-        self::$_layout = $layoutConfig = self::loadYaml($source);
+        $layoutConfig = Helper::loadYaml($source);
+
+        // Гарантируем структуру assets с массивами по умолчанию
+        $layoutConfig['assets'] = array_merge([
+            'css' => [],
+            'js' => [],
+            'js_defer' => []
+        ], $layoutConfig['assets'] ?? []);
+
+        // Нормализуем все значения к массивам
+        foreach (['css', 'js', 'js_defer'] as $key) {
+            $layoutConfig['assets'][$key] = (array)$layoutConfig['assets'][$key];
+        }
+
+        self::$_layout = $layoutConfig;
 
         return $layoutConfig;
     }
 
-    public static function loadAllSectionsConfig(): mixed
+    public static function loadSectionsConfig(): mixed
     {
         $source = self::$config_files['sections'];
 
         if (!file_exists($source)) {
             throw new \RuntimeException("Missing config/_sections.yml file");
         }
-        $allSectionsConfig = self::loadYaml($source);
+        $allSectionsConfig = Helper::loadYaml($source);
 
         if (!isset($allSectionsConfig['sections'])) {
             throw new \RuntimeException("Missing 'sections' in config/_sections.yml file");
@@ -98,57 +110,50 @@ class Homestead
         $sections = [];
 
         foreach ($allSectionsConfig['sections'] as $sectionFile) {
-            if (!is_file(CONFIG_PATH . DIRECTORY_SEPARATOR . $sectionFile)) {
+            if (!is_file(self::$_config_root . DIRECTORY_SEPARATOR . $sectionFile)) {
                 continue;
             }
 
-            $sectionConfig = self::loadYaml(CONFIG_PATH . DIRECTORY_SEPARATOR . $sectionFile);
+            $sectionConfig = Helper::loadYaml(self::$_config_root . DIRECTORY_SEPARATOR . $sectionFile);
 
             if ($sectionConfig && isset($sectionConfig['resources'])) {
                 if (isset($sectionConfig['allow'])) {
                     if (!Helper::isIPAllowed($sectionConfig['allow'])) {
-                        continue; // Пропускаем секцию, если IP не разрешен
+                        continue;
                     }
                 }
 
-                // Фильтруем ресурсы по IP-доступу
                 $filteredResources = [];
                 foreach ($sectionConfig['resources'] as $resource) {
-                    // Если для секции уже есть разрешение, ресурс показывается без проверки
+
                     if (isset($sectionConfig['allow'])) {
                         $filteredResources[] = $resource;
                     }
-
-                    // Если для ресурса указана своя директива allow, проверяем её
                     elseif (isset($resource['allow'])) {
                         if (Helper::isIPAllowed($resource['allow'])) {
                             $filteredResources[] = $resource;
                         }
                     }
-
-                    // Если у ресурса нет ограничений, показываем его
                     else {
                         $filteredResources[] = $resource;
                     }
                 }
 
-                // Добавляем секцию только если в ней есть ресурсы после фильтрации
                 if (!empty($filteredResources)) {
                     $sections[] = [
-                        'title'     => $sectionConfig['title'] ?? basename(CONFIG_PATH . DIRECTORY_SEPARATOR . $sectionFile, '.yml'),
-                        'icon'      => $sectionConfig['icon'] ?? null,
+                        'title' => $sectionConfig['title'] ?? basename(self::$_config_root . DIRECTORY_SEPARATOR . $sectionFile, '.yml'),
+                        'icon' => $sectionConfig['icon'] ?? null,
                         'resources' => $filteredResources
                     ];
                 }
 
-            } // if
-        } // foreach sections
+            }
+        }
 
         self::$_sections = $sections;
 
         return $sections;
     }
-
 
 
 }

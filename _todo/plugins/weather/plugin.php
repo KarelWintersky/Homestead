@@ -50,8 +50,8 @@ function weather_plugin($options) {
     );
 
     $result = [
-        'css' => file_exists(__DIR__.'/weather.css') ? file_get_contents(__DIR__.'/weather.css') : '',
-        'js' => file_exists(__DIR__.'/weather.js') ? file_get_contents(__DIR__.'/weather.js') : '',
+        'css' => file_exists(__DIR__ . '/weather.css') ? file_get_contents(__DIR__ . '/weather.css') : '',
+        'js' => file_exists(__DIR__ . '/weather.js') ? file_get_contents(__DIR__ . '/weather.js') : '',
         'html' => $html,
         'data' => $data,
         '_cached' => time()

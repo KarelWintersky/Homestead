@@ -1,8 +1,16 @@
 <?php
 
 namespace Homestead;
+
+use Symfony\Component\Yaml\Yaml;
+
 class Helper
 {
+    public static function loadYaml($filename): mixed
+    {
+        return Yaml::parseFile($filename);
+    }
+
     /**
      * Проверяет, разрешен ли текущий IP-адрес для доступа к секции
      *
