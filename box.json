@@ -2,7 +2,7 @@
     "main": "vendor/autoload.php",
     "output": "homestead.phar",
     "force-autodiscovery": true,
-    "directories": ["vendor", "engine"],
+    "directories": ["vendor", "engine", "templates"],
 
     "stub": false,
     "compression": "GZ",
