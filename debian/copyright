@@ -1,0 +1,12 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: homestead
+Source: -
+
+This package was debianized by Karel Wintersky <karel.wintersky@yandex.ru> on
+Mon, 17 Nov 2025 22:00:00 +0300
+
+Upstream Author(s): Karel Wintersky <karel.wintersky@yandex.ru>
+
+Copyright:
+
+...

@@ -1,0 +1,11 @@
+Source: homestead
+Section: unknown
+Priority: optional
+Maintainer: Karel Wintersky <karel.wintersky@yandex.ru>
+Uploaders: Karel Wintersky <karel.wintersky@yandex.ru>
+Build-Depends: debhelper (>= 10)
+Standards-Version: 3.9.8
+
+Package: homestead
+Architecture: all
+Description: Simple Dashboard
