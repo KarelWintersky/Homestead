@@ -4,11 +4,11 @@ namespace Homestead;
 
 class Template
 {
-    public static function render_template($template, $data = []): bool|string
+    public static function render_template($file, $data = []): bool|string
     {
         extract($data);
         ob_start();
-        include $template;
+        include $file;
         return ob_get_clean();
     }
 

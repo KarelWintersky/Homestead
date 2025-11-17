@@ -1,14 +1,10 @@
-<?php
-$currentYear = date('Y');
-$copyrightYear = ($currentYear == 2025) ? '2025' : "2025&mdash;$currentYear";
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="copyright" content="ООО Психотроника, <?= $copyrightYear ?>">
-    <title><?= htmlspecialchars($layoutStyles['title'] ?? 'Resource Links') ?></title>
+    <title><?= htmlspecialchars($layoutData['meta']['title'] ?? 'Resource Links') ?></title>
     <?php if ($favicon): ?><link rel="icon" href="<?= htmlspecialchars($favicon) ?>" type="image/x-icon"> <?php endif; ?>
 
     <!-- OpenGraph мета-теги -->
@@ -111,12 +107,22 @@ $copyrightYear = ($currentYear == 2025) ? '2025' : "2025&mdash;$currentYear";
         h1 {
             margin: 0;
         }
+        .empty-dashboard {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            font-size: 18px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            margin: 40px 0;
+        }
     </style>
 
     <style data-comment="patch">
         body {
-            font-family: <?= $layoutStyles['font-family'] ?? 'Arial, sans-serif' ?>;
-            max-width: <?= $layoutStyles['max-width'] ?? '1200px' ?>;
+            font-family: <?= $layoutStyles['page']['font-family'] ?? 'Arial, sans-serif' ?>;
+            max-width: <?= $layoutStyles['page']['max-width'] ?? '1200px' ?>;
         <?php if (isset($layoutStyles['background']['image'])): ?>
             background-image: url('<?= htmlspecialchars($layoutStyles['background']['image']) ?>');
             background-size: <?= $layoutStyles['background']['size'] ?? 'cover' ?>;
@@ -128,35 +134,40 @@ $copyrightYear = ($currentYear == 2025) ? '2025' : "2025&mdash;$currentYear";
         <?php endif; ?>
         <?php elseif (isset($layoutStyles['background']['color'])): ?>
             background-color: <?= $layoutStyles['background']['color'] ?>;
-        <?php else: ?>
-            background-color: <?= $layoutStyles['background-color'] ?? '#fff' ?>;
         <?php endif; ?>
-            color: <?= $layoutStyles['text-color'] ?? '#333' ?>;
+            color: <?= $layoutStyles['page']['text-color'] ?? '#333' ?>;
         }
 
         .section-title {
-            color: <?= $layoutStyles['section-title-color'] ?? '#333' ?>;
-            border-bottom: 2px solid <?= $layoutStyles['section-border-color'] ?? '#eee' ?>;
+            color: <?= $layoutStyles['section']['title-color'] ?? '#333' ?>;
+            border-bottom: 2px solid <?= $layoutStyles['section']['border-color'] ?? '#eee' ?>;
         }
         .resource-card {
-            border: 1px solid <?= $layoutStyles['card-border-color'] ?? '#ddd' ?>;
-            background-color: <?= $layoutStyles['card-bg-color'] ?? '#fff' ?>;
+            border: 1px solid <?= $layoutStyles['card']['border-color'] ?? '#ddd' ?>;
+            background-color: <?= $layoutStyles['card']['background-color'] ?? '#fff' ?>;
         }
         .resource-card:hover {
-            border-color: <?= $layoutStyles['card-hover-border-color'] ?? '#aaa' ?>;
+            border-color: <?= $layoutStyles['card']['hover-border-color'] ?? '#aaa' ?>;
         }
         .resource-title {
-            color: <?= $layoutStyles['card-title-color'] ?? '#0066cc' ?>;
+            color: <?= $layoutStyles['card']['title-color'] ?? '#0066cc' ?>;
         }
         .resource-description {
-            color: <?= $layoutStyles['card-description-color'] ?? '#666' ?>;
+            color: <?= $layoutStyles['card']['description-color'] ?? '#666' ?>;
         }
 
         .header-icon {
-            width: <?= $layoutStyles['header-icon-size'] ?? '40px' ?>;
-            height: <?= $layoutStyles['header-icon-size'] ?? '40px' ?>;
+            width: <?= $layoutData['page']['header-icon-size'] ?? '40px' ?>;
+            height: <?= $layoutData['page']['header-icon-size'] ?? '40px' ?>;
             object-fit: contain;
         }
+
+        .empty-dashboard {
+            color: <?= $layoutStyles['empty']['text-color'] ?? '#666' ?>;
+            border-color: <?= $layoutStyles['empty']['border-color'] ?? '#ddd' ?>;
+            background-color: <?= $layoutStyles['empty']['background-color'] ?? '#f9f9f9' ?>;
+        }
+
     </style>
 
     <?php foreach($layoutConfig['assets']['css'] as $f): ?>
@@ -173,39 +184,55 @@ $copyrightYear = ($currentYear == 2025) ? '2025' : "2025&mdash;$currentYear";
 </head>
 <body>
 
-<div class="header-container">
-    <?php if (isset($layoutStyles['header-icon'])): ?>
-        <img src="<?= htmlspecialchars($layoutStyles['header-icon']) ?>" alt="Header icon" class="header-icon">
-    <?php endif; ?>
-    <h1><?= htmlspecialchars($layoutStyles['header'] ?? 'Resource Links') ?></h1>
-</div>
-
-<?php foreach ($sections as $section): ?>
-    <div class="section">
-        <div class="section-header">
-            <?php if (isset($section['icon'])): ?>
-                <img src="<?= htmlspecialchars($section['icon']) ?>" alt="Section icon" class="section-icon">
-            <?php endif; ?>
-            <h2 class="section-title"><?= htmlspecialchars($section['title']) ?></h2>
-        </div>
-
-        <div class="resources-grid">
-            <?php foreach ($section['resources'] as $resource): ?>
-                <a href="<?= htmlspecialchars($resource['link']) ?>" class="resource-card" target="_blank">
-                    <h3 class="resource-title">
-                        <?php if (isset($resource['icon'])): ?>
-                            <img src="<?= htmlspecialchars($resource['icon']) ?>" alt="Icon" class="resource-icon">
-                        <?php endif; ?>
-                        <?= htmlspecialchars($resource['name']) ?>
-                    </h3>
-                    <?php if (isset($resource['description'])): ?>
-                        <p class="resource-description"><?= htmlspecialchars($resource['description']) ?></p>
-                    <?php endif; ?>
-                </a>
-            <?php endforeach; ?>
-        </div>
+<?php if (!empty($layoutData['page']['header'])): ?>
+    <div class="header-container">
+        <?php if (isset($layoutData['page']['header-icon'])): ?>
+            <img src="<?= htmlspecialchars($layoutData['page']['header-icon']) ?>" alt="Header icon" class="header-icon">
+        <?php endif; ?>
+        <h1><?= htmlspecialchars($layoutData['page']['header']) ?></h1>
     </div>
-<?php endforeach; ?>
+<?php endif; ?>
+
+<?php if (empty($sections)): ?>
+    <div class="empty-dashboard">
+        <?php if (!empty($errorMessage)): ?>
+        <?= $errorMessage ?>
+        <?php else: ?>
+            No sections file(s) found. <br>
+            <br>
+            Dashboard is empty. <br>
+            <br>
+            See for details <a href="https://github.com/KarelWintersky/Homestead" target="_blank">KarelWintersky/Homestead</a> project.
+        <?php endif; ?>
+    </div>
+<?php else: ?>
+    <?php foreach ($sections as $section): ?>
+        <div class="section">
+            <div class="section-header">
+                <?php if (isset($section['icon'])): ?>
+                    <img src="<?= htmlspecialchars($section['icon']) ?>" alt="Section icon" class="section-icon">
+                <?php endif; ?>
+                <h2 class="section-title"><?= htmlspecialchars($section['title']) ?></h2>
+            </div>
+
+            <div class="resources-grid">
+                <?php foreach ($section['resources'] as $resource): ?>
+                    <a href="<?= htmlspecialchars($resource['link']) ?>" class="resource-card" target="_blank">
+                        <h3 class="resource-title">
+                            <?php if (isset($resource['icon'])): ?>
+                                <img src="<?= htmlspecialchars($resource['icon']) ?>" alt="Icon" class="resource-icon">
+                            <?php endif; ?>
+                            <?= htmlspecialchars($resource['name']) ?>
+                        </h3>
+                        <?php if (isset($resource['description'])): ?>
+                            <p class="resource-description"><?= htmlspecialchars($resource['description']) ?></p>
+                        <?php endif; ?>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>
 
 </body>
 </html>

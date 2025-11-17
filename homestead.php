@@ -1,8 +1,9 @@
 <?php
 
 use Homestead\Homestead;
+use Homestead\HomesteadException;
 use Symfony\Component\Yaml\Exception\ParseException;
-
+if (!defined('HOMESTEAD_VERSION')) { define('HOMESTEAD_VERSION', '%HOMESTEAD_VERSION%'); }
 if (!defined("START_TIME")) { define("START_TIME", microtime(true)); }
 if (!defined("CONFIG_PATH")) { define("CONFIG_PATH",
     $_SERVER['APP_CONFIG'] ?? __DIR__ . DIRECTORY_SEPARATOR . 'config'
@@ -20,25 +21,40 @@ try {
     Homestead::loadCredentials();
 
     $layoutConfig = Homestead::loadLayoutConfig();
-    $layoutStyles = $layoutConfig['layout'] ?? [];
-    $favicon = $layoutStyles['favicon'] ?? null;
+
+    $layoutData = $layoutConfig['layout'] ?? [];
+    $layoutStyles = $layoutConfig['styles'] ?? [];
+
+    $favicon = $layoutData['favicon'] ?? '';
     $ogConfig = $layoutConfig['opengraph'] ?? [];
 
     // Загружаем все конфиги секций
     $allSectionsConfig = Homestead::loadSectionsConfig();
     $sections = Homestead::loadSections($allSectionsConfig);
 
-    $template = \Homestead\Template::render_template("templates/main.php", [
-        'layoutStyles'  =>  $layoutStyles,
-        'layoutConfig'  =>  $layoutConfig,
-        'sections'      =>  $sections,
-        'ogConfig'      =>  $ogConfig,
-        'favicon'       =>  $favicon,
-    ]);
-    echo $template;
-
+} catch (HomesteadException $e) {
+    $errorMessage = $e->getMessage();
 } catch (RuntimeException|ParseException|RedisException $e) {
     die($e->getMessage());
+} finally {
+    $currentYear = date('Y');
+    $copyrightYear = ($currentYear == 2025) ? '2025' : "2025&mdash;$currentYear";
+
+    $template = \Homestead\Template::render_template("templates/main.php", [
+        'layoutConfig'  =>  $layoutConfig ?? [],
+
+        'layoutStyles'  =>  $layoutStyles ?? [],
+        'layoutData'    =>  $layoutData ?? [],
+        'ogConfig'      =>  $ogConfig ?? [],
+        'favicon'       =>  $favicon ?? [],
+
+        'sections'      =>  $sections ?? [],
+
+        'errorMessage'  =>  $errorMessage ?? '',
+        'copyrightYear' =>  $copyrightYear
+    ]);
+
+    echo $template;
 }
 
 if (defined("START_TIME")) {

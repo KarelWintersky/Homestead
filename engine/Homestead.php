@@ -47,13 +47,19 @@ class Homestead
     /**
      * Загружает файл с конфигами редис/sqlite
      *
+     * @param bool $required
      * @return mixed
      */
-    public static function loadCredentials():mixed
+    public static function loadCredentials(bool $required = false):mixed
     {
         $source = self::$config_files['config'];
         if (!file_exists($source)) {
-            throw new \RuntimeException("Missing config/_config.yml file");
+
+            if ($required) {
+                throw new HomesteadException("Missing file: _config.yml");
+            }
+
+            return false;
         }
 
         self::$_config = $systemConfig = Helper::loadYaml($source);
@@ -61,11 +67,12 @@ class Homestead
         return $systemConfig;
     }
 
-    public static function loadLayoutConfig(): mixed
+    public static function loadLayoutConfig():array
     {
         $source = self::$config_files['layout'];
+
         if (!file_exists($source)) {
-            throw new \RuntimeException("Missing config/_layout.yml file");
+            throw new HomesteadException("Missing file: _layout.yml");
         }
 
         $layoutConfig = Helper::loadYaml($source);
@@ -92,12 +99,13 @@ class Homestead
         $source = self::$config_files['sections'];
 
         if (!file_exists($source)) {
-            throw new \RuntimeException("Missing config/_sections.yml file");
+            throw new HomesteadException("Missing file: _sections.yml");
         }
+
         $allSectionsConfig = Helper::loadYaml($source);
 
         if (!isset($allSectionsConfig['sections'])) {
-            throw new \RuntimeException("Missing 'sections' in config/_sections.yml file");
+            throw new HomesteadException("Missing 'sections' in _sections.yml");
         }
 
         self::$_sections_raw = $allSectionsConfig;
@@ -105,8 +113,12 @@ class Homestead
         return $allSectionsConfig;
     }
 
-    public static function loadSections($allSectionsConfig):array
+    public static function loadSections(array $allSectionsConfig):array
     {
+        if (empty($allSectionsConfig)) {
+            return [];
+        }
+
         $sections = [];
 
         foreach ($allSectionsConfig['sections'] as $sectionFile) {
