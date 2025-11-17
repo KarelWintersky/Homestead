@@ -40,6 +40,11 @@ phar:	##@build Compile PHAR file
 pharlist:	##@build List of PHAR file
 	@box info --list homestead.phar
 
+update:		##@build Update project from GIT
+	@echo Updating project from GIT
+	git pull --no-rebase
+
+
 dchr:		##@development Publish release
 	@dch --controlmaint --release --distribution unstable
 
@@ -52,6 +57,10 @@ dchv:		##@development Append release
 	read -p "Next version: " VERSION && \
 	dch --controlmaint -v $$VERSION
 
+dchn:		##@development Initial create changelog file
+	@export DEBEMAIL="karel.wintersky@yandex.ru" && \
+	export DEBFULLNAME="Karel Wintersky" && \
+	dch --create --package $(PACKAGE_NAME)
 
 # ------------------------------------------------
 # Add the following 'help' target to your makefile, add help text after each target name starting with '\#\#'
