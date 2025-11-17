@@ -8,11 +8,10 @@ PATH_PROJECT = $(DESTDIR)/var/www/$(PROJECT)
 install: ##@system Install package. Don't run it manually!!!
 	@echo Installing...
 	install -d $(PATH_PROJECT)
-	install -d $(PATH_PROJECT)/icons
+	install -d $(PATH_PROJECT)/config
 	cp build/homestead.php $(PATH_PROJECT)/homestead.php
 	cp build/homestead.phar $(PATH_PROJECT)/homestead.phar
 	cp -r icons $(PATH_PROJECT)/
-	cp -r config $(PATH_PROJECT)/
 	git rev-parse --short HEAD > $(PATH_PROJECT)/_version
 	git log --oneline --format=%B -n 1 HEAD | head -n 1 >> $(PATH_PROJECT)/_version
 	git log --oneline --format="%at" -n 1 HEAD | xargs -I{} date -d @{} +%Y-%m-%d >> $(PATH_PROJECT)/_version
