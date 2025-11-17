@@ -1,8 +1,13 @@
+<?php
+$currentYear = date('Y');
+$copyrightYear = ($currentYear == 2025) ? '2025' : "2025&mdash;$currentYear";
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="copyright" content="ООО Психотроника, <?= $copyrightYear ?>">
     <title><?= htmlspecialchars($layoutStyles['title'] ?? 'Resource Links') ?></title>
     <?php if ($favicon): ?><link rel="icon" href="<?= htmlspecialchars($favicon) ?>" type="image/x-icon"> <?php endif; ?>
 
@@ -204,5 +209,4 @@
 
 </body>
 </html>
-
-
+<!-- © ООО Психотроника <?= $copyrightYear ?> -->
