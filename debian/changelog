@@ -1,3 +1,9 @@
+homestead (0.8.1) stable; urgency=medium
+
+  * Stable release with fixes
+
+ -- Karel Wintersky <karel.wintersky@yandex.ru>  Mon, 01 Dec 2025 11:39:43 +0300
+
 homestead (0.8.0) stable; urgency=medium
 
   * Debianized release
